@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -119,7 +120,12 @@ func ContentSearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	query := r.Form.Get("query")
 	entries := GetEntryByContent(query)
-	tmpl.Execute(w, entries)
+	res, err := json.Marshal(entries)
+	if err != nil {
+		log.Fatal("json.Marshal: ", err)
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Write(res)
 }
 
 func TitleSearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +135,12 @@ func TitleSearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	query := r.Form.Get("query")
 	entries := GetEntryByTitle(query)
-	tmpl.Execute(w, entries)
+	res, err := json.Marshal(entries)
+	if err != nil {
+		log.Fatal("json.Marshal: ", err)
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Write(res)
 }
 
 func main() {
